@@ -9,8 +9,6 @@ import seaborn as sn
 
 import tdmclient.notebook
 
-#import deepcopy
-from copy import deepcopy
 
 def display_heatmap(data_to_display):
     #hm = sn.heatmap(data = data_to_display, annot=False, linewidth=.5, vmin=0, vmax=1.0) 
@@ -49,8 +47,6 @@ def initialize_maps(length,height):
     map_estimate_CV = np.empty((length,height), float)
     map_estimate_CV.fill(0)
 
-    print(map)
-
 
 def estimate_robot(x,y):
     global map_estimate_robot   
@@ -63,9 +59,7 @@ def estimate_robot(x,y):
     P_MISS = 0.2/8 #8 neighboring pixels
     map_estimate_robot[x][y] = P_HIT
     neighbouring_pixels(x,y,P_MISS,map_estimate_robot)
-    
-    #display_heatmap(map_estimate_robot)
-    print(map_estimate_robot)
+
 
 
 def estimate_CV(x,y,confidence_CV):
@@ -77,9 +71,7 @@ def estimate_CV(x,y,confidence_CV):
     MEAS_P_MISS = (1-confidence_CV)/8
     map_estimate_CV[x][y] = MEAS_P_HIT
     neighbouring_pixels(x,y,MEAS_P_MISS,map_estimate_CV)
-    
-    #display_heatmap(map_estimate_CV)
-    print(map_estimate_CV)
+
 
 def multiply_maps():
     global map, map_estimate_CV, map_estimate_robot
@@ -95,7 +87,6 @@ def multiply_maps():
     if (not np.any(map)):
         map = map_estimate_CV  # if start map and new position is too different, just take the position of the CV (e.g. displacing robot by hand)
 
-    print("multiply", map)
 
 
 def normalize_map():
@@ -103,8 +94,7 @@ def normalize_map():
   
     sum = np.sum(map)
     map = np.divide(map,sum)
-    
-    display_heatmap(map)
+
 
 
 def multiple_highest_prob_with_same_value(pos_robot,indices):
@@ -141,10 +131,8 @@ def filtered_pos_robot():
         Y_ROBOT = indices[1].item()
     else:
         X_ROBOT, Y_ROBOT = multiple_highest_prob_with_same_value(pos_robot,indices)
-    
-    print("X_ROBOT: ", X_ROBOT)
-    print("Y_ROBOT: ", Y_ROBOT)
 
+    print(X_ROBOT,Y_ROBOT)
     return X_ROBOT,Y_ROBOT
 
 
