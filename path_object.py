@@ -22,7 +22,7 @@ def fix_output(sorted_object,sorted_object_last):
     if len(sorted_object) < 2:
         return False
     if sorted_object[0][0] != "robot": 
-        sorted_object.insert(0,["robot",None])
+        sorted_object.insert(0,["robot",None,0])
     if sorted_object[1][0] != "mars": 
         sorted_object.insert(1,["mars",None])
     if sorted_object[2][0] != "earth":

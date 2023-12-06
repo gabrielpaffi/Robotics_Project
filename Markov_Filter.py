@@ -1,4 +1,4 @@
-# MARKOV
+# MARKOV THIS IS THE NEWer VERSION !!!
 
 # Imports
 import numpy as np
@@ -30,21 +30,21 @@ def neighbouring_pixels(x,y,prob,any_map):
     any_map[x+1][y+1] = prob
 
  
-def initialize_maps(length,height):
+def initialize_maps(height,length):
     global map, map_estimate_robot, map_estimate_CV
     
     # initialize map
     start_prob = 1/(length*height)
-    map = np.empty((length,height), float)
+    map = np.empty((height,length), float)
     map.fill(start_prob)
     #display_heatmap(map)
 
     # initialize map_estimate_robot
-    map_estimate_robot = np.empty((length,height), float)
+    map_estimate_robot = np.empty((height,length), float)
     map_estimate_robot.fill(0.0)
 
     # initialize map_estimate_CV
-    map_estimate_CV = np.empty((length,height), float)
+    map_estimate_CV = np.empty((height,length), float)
     map_estimate_CV.fill(0)
 
 
@@ -79,13 +79,15 @@ def multiply_maps():
     
     # if the estimated position of the robot and by CV are too far apart, or the last position of the robot and its position now, the whole map after multiplication is = 0
     # in this case, set map = map_estimate_robot as it is less likely that the position measured by the robot is off by a lot than the CV
+    
+    
     if (not np.any(temp)):
         map = map
     else:
         map = np.multiply(map,temp)
-
     if (not np.any(map)):
-        map = map_estimate_CV  # if start map and new position is too different, just take the position of the CV (e.g. displacing robot by hand)
+        map = map_estimate_CV # IS THIS NECESSARY ????????
+
 
 
 
@@ -132,11 +134,10 @@ def filtered_pos_robot():
     else:
         X_ROBOT, Y_ROBOT = multiple_highest_prob_with_same_value(pos_robot,indices)
 
-    print(X_ROBOT,Y_ROBOT)
     return X_ROBOT,Y_ROBOT
 
-
-def markov(x_robot,y_robot,x_CV,y_CV,confindence_CV):
+# if first step is true, take the one from CV
+def markov(x_robot,y_robot,x_CV,y_CV,confindence_CV,first_step):
     # Initialize local variables
     x_filtered_pos_robot = 0
     y_filtered_pos_robot = 0
@@ -152,5 +153,14 @@ def markov(x_robot,y_robot,x_CV,y_CV,confindence_CV):
     multiply_maps()
     normalize_map()
     x_filtered_pos_robot, y_filtered_pos_robot = filtered_pos_robot()
+
+    if ((abs(x_CV-x_robot) >= 3) or (abs(x_CV-x_robot) >= 3) or first_step):
+        x_filtered_pos_robot = x_CV
+        y_filtered_pos_robot = y_CV
+        #update map
+        map[x_robot][y_robot] = 0.8
+        neighbouring_pixels(x_robot,y_robot,0.025,map)
+
+    
 
     return x_filtered_pos_robot, y_filtered_pos_robot
