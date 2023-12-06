@@ -51,8 +51,8 @@ def detection(frame):
 
 
 def annotation(frame, coord):
-    print("\n")
     
+
     for k in range(len(coord)-1):
         
         
