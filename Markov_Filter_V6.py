@@ -181,37 +181,40 @@ def filtered_pos_robot(map,map_estimate_robot):
 
 # if first step is true, take the one from CV
 def markov(x_robot,y_robot,x_CV,y_CV,confindence_CV,first_step,height,length):
-
-    if first_step:
-        map, map_estimate_robot, map_estimate_CV = initialize_maps(height,length)
-
     # Initialize local variables
     x_filtered_pos_robot = 0
     y_filtered_pos_robot = 0
 
-    # take integer value (rounded down)
-    x_robot = np.int64(x_robot)
-    y_robot = np.int64(y_robot)
-    x_CV = np.int64(x_CV)
-    y_CV = np.int64(y_CV)
-    
-
-    
-    map_estimate_robot = estimate_robot(x_robot,y_robot,map_estimate_robot)
-    map_estimate_CV = estimate_CV(x_CV,y_CV,confindence_CV,map_estimate_CV)
-    map = multiply_maps(map, map_estimate_CV, map_estimate_robot)
-    map = normalize_map(map)
-    x_filtered_pos_robot, y_filtered_pos_robot = filtered_pos_robot(map,map_estimate_robot)
-
-
-    if ((abs(x_CV-x_robot) >= 3) or (abs(x_CV-x_robot) >= 3) or first_step):
-        print("in special case")
+    if first_step:
+        map, map_estimate_robot, map_estimate_CV = initialize_maps(height,length)
         x_filtered_pos_robot = x_CV
         y_filtered_pos_robot = y_CV
-        #update map
-        map[x_robot][y_robot] = 0.8
-        neighbouring_pixels(x_robot,y_robot,0.025,map)
+        
+    else:
 
-    display_heatmap(map)
+        # take integer value (rounded down)
+        x_robot = np.int64(x_robot)
+        y_robot = np.int64(y_robot)
+        x_CV = np.int64(x_CV)
+        y_CV = np.int64(y_CV)
+        
+
+        
+        map_estimate_robot = estimate_robot(x_robot,y_robot,map_estimate_robot)
+        map_estimate_CV = estimate_CV(x_CV,y_CV,confindence_CV,map_estimate_CV)
+        map = multiply_maps(map, map_estimate_CV, map_estimate_robot)
+        map = normalize_map(map)
+        x_filtered_pos_robot, y_filtered_pos_robot = filtered_pos_robot(map,map_estimate_robot)
+
+
+        if ((abs(x_CV-x_robot) >= 3) or (abs(x_CV-x_robot) >= 3) or first_step):
+            print("in special case")
+            x_filtered_pos_robot = x_CV
+            y_filtered_pos_robot = y_CV
+            #update map
+            map[x_robot][y_robot] = 0.8
+            neighbouring_pixels(x_robot,y_robot,0.025,map)
+
+        
     
     return x_filtered_pos_robot, y_filtered_pos_robot
